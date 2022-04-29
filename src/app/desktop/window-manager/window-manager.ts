@@ -51,7 +51,9 @@ export class WindowManager {
   }
 
   closeWindow(window: WindowDelegate) {
-    this.activeWindow.windowIsClosed()
+    this.activeWindow.component.windowIsClosed()
+
+    console.log(this.activeWindow)
 
     window.component.events.next('close');
 

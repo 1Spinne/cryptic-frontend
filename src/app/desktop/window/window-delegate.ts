@@ -9,8 +9,6 @@ export abstract class WindowDelegate {
 
   constraints: WindowConstraints = new WindowConstraints();
 
-  windowIsClosed() {}
-
   component: WindowComponent;
   device: Device;
 
@@ -54,4 +52,5 @@ export interface WindowPosition {
 export abstract class WindowComponent {
   delegate: WindowDelegate;
   events = new Subject<string>();
+  windowIsClosed() {}
 }
