@@ -51,6 +51,8 @@ export class WindowManager {
   }
 
   closeWindow(window: WindowDelegate) {
+    this.activeWindow.windowIsClosed()
+
     window.component.events.next('close');
 
     this.windows.splice(this.windows.findIndex(win => win === window), 1);

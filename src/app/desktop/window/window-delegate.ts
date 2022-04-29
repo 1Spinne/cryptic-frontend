@@ -9,6 +9,8 @@ export abstract class WindowDelegate {
 
   constraints: WindowConstraints = new WindowConstraints();
 
+  windowIsClosed() {}
+
   component: WindowComponent;
   device: Device;
 
