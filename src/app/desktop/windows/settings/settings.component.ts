@@ -68,29 +68,6 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
   ngOnDestroy() {
     console.log("byebye")
   }
-
-  override onMinimize() {
-    console.log('minimize settings')
-  }
-
-  override onDeMinimize() {
-    console.log('deminimize settings')
-  }
-
-  override onMaximize() {
-    console.log('maximize settings')
-  }
-
-  override onDeMaximize() {
-    console.log('demaximize settings')
-  }
-
-  override onResize() {
-    console.log("resize settings")
-
-    console.log(this.resizeDirection)
-  }
-
 }
 
 export class SettingsWindowDelegate extends WindowDelegate {
