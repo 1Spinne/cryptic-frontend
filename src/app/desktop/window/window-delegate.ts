@@ -49,8 +49,26 @@ export interface WindowPosition {
   minimized: boolean;
 }
 
+export enum ResizeDirections {
+  E=1,
+  S,
+  W,
+  N,
+  SE,
+  SW,
+  NW,
+  NE
+}
+
 export abstract class WindowComponent {
   delegate: WindowDelegate;
   events = new Subject<string>();
-  windowIsClosed() {}
+
+  resizeDirection = "";
+
+  onMinimize() { }
+  onDeMinimize() { }
+  onMaximize() { }
+  onDeMaximize() { }
+  onResize() { }
 }

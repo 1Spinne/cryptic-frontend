@@ -51,10 +51,6 @@ export class WindowManager {
   }
 
   closeWindow(window: WindowDelegate) {
-    this.activeWindow.component.windowIsClosed()
-
-    console.log(this.activeWindow)
-
     window.component.events.next('close');
 
     this.windows.splice(this.windows.findIndex(win => win === window), 1);
@@ -93,12 +89,14 @@ export class WindowManager {
   toggleMinimize(window: WindowDelegate) {
     window.position.minimized = !window.position.minimized;
     if (window.position.minimized) {
+      window.component.onMinimize()
       window.position.zIndex = -1;
       this.sortWindows();
       this.focusWindow(this.windows[this.windows.length - 1]);
 
       this.activeWindow.component.events.next('minimize');
     } else {
+      window.component.onDeMinimize()
       this.focusWindow(window);
       this.activeWindow.component.events.next('restore');
     }

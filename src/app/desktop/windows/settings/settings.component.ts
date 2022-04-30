@@ -1,5 +1,5 @@
-import {Component, OnInit, Type} from '@angular/core';
-import {WindowComponent, WindowConstraints, WindowDelegate} from '../../window/window-delegate';
+import { Component, OnInit, Type, OnDestroy } from '@angular/core';
+import { ResizeDirections, WindowComponent, WindowConstraints, WindowDelegate } from '../../window/window-delegate';
 import {SettingsService} from './settings.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SettingsEntry} from './settings-entry';
@@ -11,7 +11,7 @@ import {map} from "rxjs/operators";
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent extends WindowComponent implements OnInit {
+export class SettingsComponent extends WindowComponent implements OnInit, OnDestroy {
   settingEntries: [string, SettingsEntry<any>][] = Object.entries({
     backgroundImage: this.settings.backgroundImage,
     terminalPromptColor: this.settings.terminalPromptColor,
@@ -63,6 +63,32 @@ export class SettingsComponent extends WindowComponent implements OnInit {
     await Promise.all(
       this.settingEntries.map(([name, setting]) => setting.set(this.form.value[name]))
     );
+  }
+
+  ngOnDestroy() {
+    console.log("byebye")
+  }
+
+  override onMinimize() {
+    console.log('minimize settings')
+  }
+
+  override onDeMinimize() {
+    console.log('deminimize settings')
+  }
+
+  override onMaximize() {
+    console.log('maximize settings')
+  }
+
+  override onDeMaximize() {
+    console.log('demaximize settings')
+  }
+
+  override onResize() {
+    console.log("resize settings")
+
+    console.log(this.resizeDirection)
   }
 
 }

@@ -1,5 +1,5 @@
 import {Component, ComponentFactoryResolver, HostListener, Injector, Input, OnInit, ViewChild} from '@angular/core';
-import {WindowDelegate} from './window-delegate';
+import {ResizeDirections, WindowDelegate} from './window-delegate';
 import {WindowPlaceDirective} from './window-place.directive';
 import {GlobalCursorService} from '../../global-cursor.service';
 import {WindowManager} from '../window-manager/window-manager';
@@ -113,6 +113,7 @@ export class WindowFrameComponent implements OnInit {
   checkResizingStart(event: MouseEvent) {
     this.resizeDirection = this.checkResizeDirection(event.clientX, event.clientY, event.target as Element);
     if (this.resizeDirection !== 0) {
+      this.delegate.component.onResize();
       this.resizing = true;
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -143,6 +144,8 @@ export class WindowFrameComponent implements OnInit {
         2: 's-resize',
         1: 'e-resize',
       }[direction]);
+      this.delegate.component.resizeDirection = ResizeDirections[direction];
+      
     }
   }
 
@@ -241,10 +244,16 @@ export class WindowFrameComponent implements OnInit {
   minimize() {
     this.windowManager.unfocus();
     this.delegate.position.minimized = true;
+    this.delegate.component.onMinimize();
   }
 
   maximize() {
     if (this.delegate.constraints.maximizable) {
+      if (!this.delegate.position.maximized) {
+        this.delegate.component.onMaximize()
+      } else {
+        this.delegate.component.onDeMaximize()
+      }
       this.delegate.position.maximized = !this.delegate.position.maximized;
     }
   }
