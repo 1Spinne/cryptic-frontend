@@ -1,5 +1,5 @@
-import { Component, OnInit, Type, OnDestroy } from '@angular/core';
-import { WindowComponent, WindowConstraints, WindowDelegate } from '../../window/window-delegate';
+import {Component, OnInit, Type, OnDestroy} from '@angular/core';
+import {WindowComponent, WindowConstraints, WindowDelegate} from '../../window/window-delegate';
 import {SettingsService} from './settings.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SettingsEntry} from './settings-entry';
@@ -24,6 +24,7 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
   constructor(public settings: SettingsService, private formBuilder: FormBuilder) {
     super();
     this.initForm();
+    this.
   }
 
   ngOnInit() {
