@@ -21,10 +21,11 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
 
   form: FormGroup;
 
+  saveFromBefore = this.settingEntries
+
   constructor(public settings: SettingsService, private formBuilder: FormBuilder) {
     super();
     this.initForm();
-    this.
   }
 
   ngOnInit() {
@@ -59,15 +60,24 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
   }
 
   async saveSettings() {
-    console.log(this.form.value)
-    console.log(this.settingEntries)
     await Promise.all(
-      this.settingEntries.map(([name, setting]) => setting.set(this.form.value[name]))
+      this.saveFromBefore.map(([name, setting]) => setting.set(this.form.value[name]))
     );
   }
 
-  ngOnDestroy() {
+  async tempSaveSettings() {
+    // await Promise.all(
+    //   this.settingEntries.map(([name, setting]) => setting.set(this.form.value[name]))
+    // );
+    console.log(this.saveFromBefore)
+  }
 
+  ngOnDestroy() {
+    this.settingEntries = this.saveFromBefore.valueOf()
+    console.log("orig:")
+    // console.log(this.settingEntries[0])
+    // console.log("fromBefore:")
+    // console.log(this.saveFromBefore[0])
   }
 }
 
