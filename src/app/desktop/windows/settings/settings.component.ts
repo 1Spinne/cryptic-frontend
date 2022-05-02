@@ -1,10 +1,10 @@
-import {Component, OnInit, Type, OnDestroy} from '@angular/core';
-import {WindowComponent, WindowConstraints, WindowDelegate} from '../../window/window-delegate';
-import {SettingsService} from './settings.service';
-import {FormBuilder, FormGroup} from '@angular/forms';
-import {SettingsEntry} from './settings-entry';
-import {forkJoin} from "rxjs";
-import {map} from "rxjs/operators";
+import { Component, OnInit, Type, OnDestroy } from '@angular/core';
+import { WindowComponent, WindowConstraints, WindowDelegate } from '../../window/window-delegate';
+import { SettingsService } from './settings.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { SettingsEntry } from './settings-entry';
+import { forkJoin } from "rxjs";
+import { map } from "rxjs/operators";
 
 @Component({
   selector: 'app-settings',
@@ -12,6 +12,7 @@ import {map} from "rxjs/operators";
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent extends WindowComponent implements OnInit, OnDestroy {
+
   settingEntries: [string, SettingsEntry<any>][] = Object.entries({
     backgroundImage: this.settings.backgroundImage,
     terminalPromptColor: this.settings.terminalPromptColor,
@@ -21,7 +22,7 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
 
   form: FormGroup;
 
-  saveFromBefore = [...this.settingEntries]
+  saveFromBefore = this.settingEntries;
 
   constructor(public settings: SettingsService, private formBuilder: FormBuilder) {
     super();
@@ -43,7 +44,7 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
   async loadForm() {
     forkJoin(this.settingEntries.map(
       ([name, setting]) => setting.getFresh().pipe(
-        map(value => ({name, value: value ?? setting.defaultValue}))
+        map(value => ({ name, value: value ?? setting.defaultValue }))
       )
     )).subscribe(values => {
       const result: { [name: string]: unknown } = {};
@@ -55,29 +56,33 @@ export class SettingsComponent extends WindowComponent implements OnInit, OnDest
   async resetSettings() {
     await Promise.all(this.settingEntries.map(async ([name, setting]) => {
       await setting.reset();
-      this.form.patchValue({[name]: setting.getCacheOrDefault()});
+      this.form.patchValue({ [name]: setting.getCacheOrDefault() });
     }));
   }
 
   async saveSettings() {
-    await Promise.all(
-      this.saveFromBefore.map(([name, setting]) => setting.set(this.form.value[name]))
-    );
+    // await Promise.all(
+    //   // this.saveFromBefore.map(([name, setting]) => setting.set(this.form.value[name]))
+
+    // );
   }
 
   async tempSaveSettings() {
     await Promise.all(
       this.settingEntries.map(([name, setting]) => setting.set(this.form.value[name]))
     );
+
     console.log(this.saveFromBefore)
+
   }
 
   ngOnDestroy() {
     this.settingEntries = this.saveFromBefore
     console.log("orig:")
-    console.log(this.settingEntries[0])
+    console.log(this.settingEntries)
     console.log("fromBefore:")
     console.log(this.saveFromBefore[0])
+
   }
 }
 
@@ -86,5 +91,5 @@ export class SettingsWindowDelegate extends WindowDelegate {
   icon = 'assets/desktop/img/gear.svg';
   type: Type<any> = SettingsComponent;
 
-  override constraints = new WindowConstraints({minWidth: 300, minHeight: 200});
+  override constraints = new WindowConstraints({ minWidth: 300, minHeight: 200 });
 }
