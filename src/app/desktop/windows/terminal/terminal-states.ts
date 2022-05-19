@@ -201,7 +201,7 @@ export class DefaultTerminalState extends CommandTerminalState {
     },
 
     './karl_mags.sh': {
-      executor: () => this.terminal.outputText('Jippie, ich kann mit nem Flugzeug fliegen!!!'),
+      executor: () => this.terminal.outputText('Niemals, man kann mit einem Flugzeug fliegen!!!'),
       description: '',
       hideFromHelp: true
     }
