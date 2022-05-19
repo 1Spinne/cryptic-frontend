@@ -1,17 +1,17 @@
-import {TerminalAPI, TerminalState} from './terminal-api';
-import {WebsocketService} from '../../../websocket.service';
-import {catchError, map, switchMap} from 'rxjs/operators';
-import {DomSanitizer} from '@angular/platform-browser';
-import {SecurityContext} from '@angular/core';
-import {SettingsService} from '../settings/settings.service';
-import {FileService} from '../../../api/files/file.service';
-import {Path} from '../../../api/files/path';
-import {EMPTY, forkJoin, of} from 'rxjs';
-import {Device} from '../../../api/devices/device';
-import {WindowDelegate} from '../../window/window-delegate';
-import {File} from '../../../api/files/file';
-import {BruteforceTerminalState, YesNoTerminalState} from "./TerminalStateImpls";
-import {formatNumber} from "@angular/common";
+import { TerminalAPI, TerminalState } from './terminal-api';
+import { WebsocketService } from '../../../websocket.service';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SecurityContext } from '@angular/core';
+import { SettingsService } from '../settings/settings.service';
+import { FileService } from '../../../api/files/file.service';
+import { Path } from '../../../api/files/path';
+import { EMPTY, forkJoin, of } from 'rxjs';
+import { Device } from '../../../api/devices/device';
+import { WindowDelegate } from '../../window/window-delegate';
+import { File } from '../../../api/files/file';
+import { BruteforceTerminalState, YesNoTerminalState } from "./TerminalStateImpls";
+import { formatNumber } from "@angular/common";
 
 
 function escapeHtml(html: string) {
@@ -186,7 +186,7 @@ export class DefaultTerminalState extends CommandTerminalState {
     },
     'network': {
       executor: this.network.bind(this),
-      description: 'type `network` for further information'
+      description: "type 'network' for further information"
     },
     'info': {
       executor: this.info.bind(this),
@@ -198,6 +198,12 @@ export class DefaultTerminalState extends CommandTerminalState {
       executor: () => this.terminal.outputText('"mess with the best, die like the rest :D`" - chaozz'),
       description: '',
       hideFromHelp: true
+    },
+
+    './karl_mags.sh': {
+      executor: () => this.terminal.outputText('Jippie, ich kann mit nem Flugzeug fliegen!!!'),
+      description: '',
+      hideFromHelp: true
     }
 
   };
@@ -205,8 +211,8 @@ export class DefaultTerminalState extends CommandTerminalState {
   working_dir: string | null = Path.ROOT;  // UUID of the working directory
 
   constructor(private locale: string, protected websocket: WebsocketService, private settings: SettingsService, private fileService: FileService,
-              private domSanitizer: DomSanitizer, protected windowDelegate: WindowDelegate, protected activeDevice: Device,
-              protected terminal: TerminalAPI, public promptColor: string | null = null) {
+    private domSanitizer: DomSanitizer, protected windowDelegate: WindowDelegate, protected activeDevice: Device,
+    protected terminal: TerminalAPI, public promptColor: string | null = null) {
     super();
     this.settings.terminalPromptColor.getFresh().subscribe(() => this.refreshPrompt());
   }
@@ -266,7 +272,7 @@ export class DefaultTerminalState extends CommandTerminalState {
     const table = document.createElement('table');
     Object.entries(this.commands)
       .filter(command => !('hideFromHelp' in command[1]))
-      .map(([name, value]) => ({name: name, description: value.description}))
+      .map(([name, value]) => ({ name: name, description: value.description }))
       .map(command => `<tr><td>${command.name}</td><td>${command.description}</td></tr>`)
       .forEach(row => {
         table.innerHTML += row;
@@ -412,7 +418,7 @@ export class DefaultTerminalState extends CommandTerminalState {
         }
       });
     } else {
-      this.websocket.ms('device', ['device', 'info'], {device_uuid: this.activeDevice['uuid']})
+      this.websocket.ms('device', ['device', 'info'], { device_uuid: this.activeDevice['uuid'] })
         .subscribe({
           next: (device: Device) => {
             if (device['name'] !== this.activeDevice['name']) {
@@ -600,7 +606,7 @@ export class DefaultTerminalState extends CommandTerminalState {
             const uuid = walletCred[0];
             const key = walletCred[1];
             if (uuid.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/) && key.match(/^[a-f0-9]{10}$/)) {
-              this.websocket.ms('currency', ['get'], {source_uuid: uuid, key: key}).subscribe({
+              this.websocket.ms('currency', ['get'], { source_uuid: uuid, key: key }).subscribe({
                 next: () => {
                   this.terminal.pushState(
                     new YesNoTerminalState(
@@ -608,7 +614,7 @@ export class DefaultTerminalState extends CommandTerminalState {
                       '<span class="errorText">Are you sure you want to delete your wallet? [yes|no]</span>',
                       answer => {
                         if (answer) {
-                          this.websocket.ms('currency', ['delete'], {source_uuid: uuid, key: key})
+                          this.websocket.ms('currency', ['delete'], { source_uuid: uuid, key: key })
                             .subscribe({
                               next: () => {
                                 this.websocket.ms('device', ['file', 'delete'], {
@@ -838,7 +844,7 @@ export class DefaultTerminalState extends CommandTerminalState {
   morphcoin(args: string[]) {
     if (args.length === 2) {
       if (args[0] === 'reset') {
-        this.websocket.ms('currency', ['reset'], {source_uuid: args[1]}).subscribe({
+        this.websocket.ms('currency', ['reset'], { source_uuid: args[1] }).subscribe({
           next: () => {
             this.terminal.outputText('Wallet has been deleted successfully.');
           },
@@ -874,7 +880,7 @@ export class DefaultTerminalState extends CommandTerminalState {
               const uuid = walletCred[0];
               const key = walletCred[1];
               if (uuid.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/) && key.match(/^[a-f0-9]{10}$/)) {
-                this.websocket.ms('currency', ['get'], {source_uuid: uuid, key: key}).subscribe({
+                this.websocket.ms('currency', ['get'], { source_uuid: uuid, key: key }).subscribe({
                   next: (wallet) => {
                     this.terminal.outputText(formatNumber(wallet.amount / 1000, this.locale) + ' morphcoin');
                   },
@@ -900,8 +906,8 @@ export class DefaultTerminalState extends CommandTerminalState {
 
       } else if (args[0] === 'create') {
         (path.path.length > 1
-            ? this.fileService.getFromPath(this.activeDevice['uuid'], new Path(path.path.slice(0, -1), path.parentUUID))
-            : of({uuid: path.parentUUID})
+          ? this.fileService.getFromPath(this.activeDevice['uuid'], new Path(path.path.slice(0, -1), path.parentUUID))
+          : of({ uuid: path.parentUUID })
         ).subscribe(dest => {
           this.fileService.getFromPath(this.activeDevice['uuid'], new Path(path.path.slice(-1), dest.uuid)).subscribe(() => {
             this.terminal.outputText('That file already exists');
@@ -923,15 +929,15 @@ export class DefaultTerminalState extends CommandTerminalState {
                         }))
                     })
                   ).subscribe({
-                  error: (error1: Error) => {
-                    if (error1.message === 'already_own_a_wallet') {
-                      this.terminal.outputText('You already own a wallet');
-                    } else {
-                      this.terminal.outputText(error1.message);
-                      reportError(error1);
+                    error: (error1: Error) => {
+                      if (error1.message === 'already_own_a_wallet') {
+                        this.terminal.outputText('You already own a wallet');
+                      } else {
+                        this.terminal.outputText(error1.message);
+                        reportError(error1);
+                      }
                     }
-                  }
-                });
+                  });
 
               } else {
                 this.terminal.outputText('Filename too long. Only 64 chars allowed');
@@ -1000,7 +1006,7 @@ export class DefaultTerminalState extends CommandTerminalState {
             const uuid = walletCred[0];
             const key = walletCred[1];
             if (uuid.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/) && key.match(/^[a-f0-9]{10}$/)) {
-              this.websocket.ms('currency', ['get'], {source_uuid: uuid, key: key}).subscribe({
+              this.websocket.ms('currency', ['get'], { source_uuid: uuid, key: key }).subscribe({
                 next: () => {
                   this.websocket.ms('currency', ['send'], {
                     source_uuid: uuid,
@@ -1043,7 +1049,7 @@ export class DefaultTerminalState extends CommandTerminalState {
     const activeDevice = this.activeDevice['uuid'];
 
     const getServices = () =>
-      this.websocket.ms('service', ['list'], {device_uuid: activeDevice}).pipe(map(data => {
+      this.websocket.ms('service', ['list'], { device_uuid: activeDevice }).pipe(map(data => {
         return data['services'];
       }), catchError(error => {
         reportError(error);
@@ -1066,7 +1072,7 @@ export class DefaultTerminalState extends CommandTerminalState {
         this.terminal.outputText('Unknown service. Available services: ' + services.join(', '));
         return;
       }
-      this.websocket.ms('service', ['create'], {name: service, device_uuid: activeDevice}).subscribe({
+      this.websocket.ms('service', ['create'], { name: service, device_uuid: activeDevice }).subscribe({
         next: () => {
           this.terminal.outputText('Service was created');
         },
@@ -1236,7 +1242,7 @@ export class DefaultTerminalState extends CommandTerminalState {
 
   spot() {
     this.websocket.ms('device', ['device', 'spot'], {}).subscribe(random_device => {
-      this.websocket.ms('service', ['list'], {'device_uuid': this.activeDevice['uuid']}).subscribe(localServices => {
+      this.websocket.ms('service', ['list'], { 'device_uuid': this.activeDevice['uuid'] }).subscribe(localServices => {
         //TODO: Type me correct
         const portScanner = (localServices['services'] || []).filter((service: any) => service.name === 'portscan')[0];
         if (portScanner == null || portScanner['uuid'] == null) {
@@ -1282,9 +1288,9 @@ export class DefaultTerminalState extends CommandTerminalState {
       return;
     }
 
-    this.websocket.ms('device', ['device', 'info'], {device_uuid: args[0]}).subscribe({
+    this.websocket.ms('device', ['device', 'info'], { device_uuid: args[0] }).subscribe({
       next: (infoData) => {
-        this.websocket.ms('service', ['part_owner'], {device_uuid: args[0]}).subscribe({
+        this.websocket.ms('service', ['part_owner'], { device_uuid: args[0] }).subscribe({
           next: (partOwnerData) => {
             if (infoData['owner'] === this.websocket.account.uuid || partOwnerData['ok'] === true) {
               this.terminal.pushState(
@@ -1393,7 +1399,7 @@ export class DefaultTerminalState extends CommandTerminalState {
               element.innerHTML = '';
 
               invitations.forEach((invitation: any) => { //TODO: Type me correct
-                this.websocket.ms('network', ['get'], {'uuid': invitation['network']})
+                this.websocket.ms('network', ['get'], { 'uuid': invitation['network'] })
                   .subscribe(network => {
                     element.innerHTML += '<br>Invitation: ' + '<span style="color: grey">' +
                       DefaultTerminalState.promptAppender(invitation['uuid']) + '</span><br>' +
@@ -1570,7 +1576,7 @@ export class DefaultTerminalState extends CommandTerminalState {
               element.innerHTML = '';
 
               members.forEach((member: any) => { //TODO: Type me correct
-                this.websocket.ms('device', ['device', 'info'], {'device_uuid': member['device']})
+                this.websocket.ms('device', ['device', 'info'], { 'device_uuid': member['device'] })
                   .subscribe(deviceData => {
                     element.innerHTML += ' <span style="color: grey">' + DefaultTerminalState.promptAppender(member['device']) + '</span> '
                       + deviceData['name'] + '<br>';
